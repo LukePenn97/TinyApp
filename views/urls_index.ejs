@@ -25,12 +25,12 @@
         <% let i = 0 %>
         <% for(let url in urls) { %>
           <tr>
-            <td><%= url %></td>
+            <td><a href="<%= urls[url] %>"><%= url %></a></td>
             <td><%= urls[url] %></td>
-            <td><form method="POST" id="<%='delete' + i%>" action="<%= '/urls/' + url + '/delete' %>"> </form>
-            <button type="submit" form="<%='delete' + i%>" value="submit">Delete</button></td>
-            <td><form method="POST" id="<%='edit' + i%>" action="<%= '/urls/' + url + '/show' %>"> </form>
-            <button type="submit" form="<%='edit' + i%>" value="submit">Edit</button></td>
+            <td><form method="POST" id='delete<%=i%>' action='/urls/<%= url%>/delete'> </form>
+            <button class="btn btn-outline-danger" type="submit" form='delete<%=i%>' value="submit">Delete</button></td>
+            <td><form method="POST" id='edit<%= i%>' action='/urls/<%=url%>/show'> </form>
+            <button class="btn btn-outline-primary" type="submit" form='edit<%= i%>' value="submit">Edit</button></td>
             <% i++ %>
           </tr>
         <% } %>
