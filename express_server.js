@@ -17,14 +17,31 @@ const urlDatabase = {
 };
 
 //
+// USERS DATA
+//
+
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+}
+
+//
 // GENERATE ID
 //
 
-const generateRandomString = function() {
+const generateRandomString = function(num) {
   // taken from https://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
   let chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
   let result = '';
-  for (let i = 6; i > 0; --i) {
+  for (let i = num; i > 0; --i) {
     result += chars[Math.floor(Math.random() * chars.length)];
   }
   return result;
@@ -43,7 +60,7 @@ app.get("/", (req, res) => {
 //
 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase, username: req.cookies["username"], };
+  const templateVars = { urls: urlDatabase, user_id: req.cookies["user_id"], users};
   res.render("urls_index", templateVars);
 });
 
@@ -52,7 +69,7 @@ app.get("/urls", (req, res) => {
 //
 
 app.get("/register", (req, res) => {
-  const templateVars = { urls: urlDatabase, username: req.cookies["username"], };
+  const templateVars = { urls: urlDatabase, user_id: req.cookies["user_id"], users: users};
   res.render("urls_register", templateVars);
 });
 
@@ -61,7 +78,7 @@ app.get("/register", (req, res) => {
 //
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new", {username: req.cookies["username"]});
+  res.render("urls_new", {user_id: req.cookies["user_id"], users: users});
 });
 
 //
@@ -83,7 +100,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.post("/urls", (req, res) => {
   //console.log(req.body);  // Log the POST request body to the console
-  let randomString = generateRandomString();         // Respond with 'Ok' (we will replace this)
+  let randomString = generateRandomString(6);         // Respond with 'Ok' (we will replace this)
   urlDatabase[randomString] = req.body.longURL;
   res.redirect("/urls");
 });
@@ -93,9 +110,13 @@ app.post("/urls", (req, res) => {
 //
 
 app.post("/register", (req, res) => {
-  res.cookie("username", req.body.username)
-  res.cookie("password", req.body.password)
-  const templateVars = { urls: urlDatabase, username: req.cookies["username"], };
+  let userID = generateRandomString(6);
+  users[userID] = {};
+  users[userID].id = userID;
+  users[userID].email = req.body.email;
+  users[userID].password = req.body.password;
+  res.cookie("user_id", userID);
+  console.log(users[userID]);
   res.redirect("/urls");
 });
 
@@ -113,7 +134,7 @@ app.post("/login", (req, res) => {
 //
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect("/urls");
 });
 
@@ -140,7 +161,7 @@ app.post("/urls/:shortURL/edit", (req, res) => {
 //
 
 app.post("/urls/:shortURL/show", (req, res) => {
-  const urlObj = {shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"],}
+  const urlObj = {shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], user_id: req.cookies["user_id"],}
   console.log(urlObj);
   res.render("urls_show", urlObj);
 });
