@@ -17,6 +17,7 @@
         <label for="logout-btn">Logged in as: <%= username %></label>
         <input name="logout-btn"class="btn btn-outline-dark" type="submit" form="logout" value="Logout"></input>
         </form>
+        
     <% } else {%>
     <form id="login" method="POST" action="/login">
       <label for="username">Username:</label>

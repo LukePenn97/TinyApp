@@ -48,6 +48,15 @@ app.get("/urls", (req, res) => {
 });
 
 //
+//  REGISTER
+//
+
+app.get("/register", (req, res) => {
+  const templateVars = { urls: urlDatabase, username: req.cookies["username"], };
+  res.render("urls_register", templateVars);
+});
+
+//
 // NEW URL PAGE
 //
 
@@ -76,6 +85,17 @@ app.post("/urls", (req, res) => {
   //console.log(req.body);  // Log the POST request body to the console
   let randomString = generateRandomString();         // Respond with 'Ok' (we will replace this)
   urlDatabase[randomString] = req.body.longURL;
+  res.redirect("/urls");
+});
+
+//
+// REGISTER
+//
+
+app.post("/register", (req, res) => {
+  res.cookie("username", req.body.username)
+  res.cookie("password", req.body.password)
+  const templateVars = { urls: urlDatabase, username: req.cookies["username"], };
   res.redirect("/urls");
 });
 
