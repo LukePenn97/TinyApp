@@ -141,9 +141,11 @@ app.post("/urls", (req, res) => {
 app.post("/register", (req, res) => {
   if(!req.body.email || !req.body.password) {
     res.status(400).send("error, missing field");
+    return;
   }
    if(findEmail(req.body.email)) {
     res.status(400).send("error, email already exists");
+    return;
     
   }
   let userID = generateRandomString(6);
@@ -165,14 +167,17 @@ app.post("/login", (req, res) => {
   let userID = findIdByEmail(req.body.email)
   if(!req.body.email || !req.body.password) {
     res.status(403).send("error, missing field");
+    return
 
   } 
   if(!findEmail(req.body.email)) {
     res.status(403).send("error, email doesn't exist!");
+    return;
 
   }
   if (users[userID].password !== req.body.password) {
     res.status(403).send("error, passwords don't match!");
+    return;
 
   }
   console.log("Login: ", users[userID])
