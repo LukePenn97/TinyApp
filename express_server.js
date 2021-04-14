@@ -20,17 +20,19 @@ const urlDatabase = {
 // USERS DATA
 //
 
-const users = { 
-  "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
-  },
- "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
-    password: "dishwasher-funk"
+const users = {}
+
+//
+// FIND EMAIL
+//
+
+const findEmail = function(currentEmail) {
+  for (const userID in users) {
+    if (users[userID].email === currentEmail) {
+      return true;
+    }
   }
+  return false;
 }
 
 //
@@ -110,14 +112,21 @@ app.post("/urls", (req, res) => {
 //
 
 app.post("/register", (req, res) => {
-  let userID = generateRandomString(6);
-  users[userID] = {};
-  users[userID].id = userID;
-  users[userID].email = req.body.email;
-  users[userID].password = req.body.password;
-  res.cookie("user_id", userID);
-  console.log(users[userID]);
-  res.redirect("/urls");
+  if(!req.body.email || !req.body.password) {
+    res.status(400).send("error, missing field");
+  } else if(findEmail(req.body.email)) {
+    res.status(400).send("error, email already exists");
+    
+  } else {
+    let userID = generateRandomString(6);
+    users[userID] = {};
+    users[userID].id = userID;
+    users[userID].email = req.body.email;
+    users[userID].password = req.body.password;
+    res.cookie("user_id", userID);
+    console.log(users[userID]);
+    res.redirect("/urls");
+  }
 });
 
 //
@@ -134,7 +143,9 @@ app.post("/login", (req, res) => {
 //
 
 app.post("/logout", (req, res) => {
+  console.log("Before clear in logout:", users);
   res.clearCookie("user_id");
+  console.log("After clear:", users);
   res.redirect("/urls");
 });
 

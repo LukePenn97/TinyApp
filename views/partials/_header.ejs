@@ -11,7 +11,7 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-    <% if(users[user_id]) { %>
+    <% if(user_id) { %>
         <div class="navbar-nav">
           <form id="logout" method="POST" action="/logout">
           <label for="logout-btn" style="margin: 1em;">Logged in as: <%= users[user_id].email %></label>
