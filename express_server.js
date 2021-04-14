@@ -23,7 +23,7 @@ const urlDatabase = {
 const users = {}
 
 //
-// FIND EMAIL
+// FIND EMAIL IN USERS
 //
 
 const findEmail = function(currentEmail) {
@@ -33,6 +33,18 @@ const findEmail = function(currentEmail) {
     }
   }
   return false;
+}
+
+//
+// FIND ID BY EMAIL
+//
+
+const findIdByEmail = function(currentEmail) {
+  for (const userID in users) {
+    if (users[userID].email === currentEmail) {
+      return userID;
+    }
+  }
 }
 
 //
@@ -62,7 +74,7 @@ app.get("/", (req, res) => {
 //
 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase, user_id: req.cookies["user_id"], users};
+  const templateVars = { urls: urlDatabase, user_id: req.cookies["user_id"], users: users};
   res.render("urls_index", templateVars);
 });
 
@@ -73,6 +85,15 @@ app.get("/urls", (req, res) => {
 app.get("/register", (req, res) => {
   const templateVars = { urls: urlDatabase, user_id: req.cookies["user_id"], users: users};
   res.render("urls_register", templateVars);
+});
+
+//
+// LOGIN
+//
+
+app.get("/login", (req, res) => {
+  const templateVars = { urls: urlDatabase, user_id: req.cookies["user_id"], users: users};
+  res.render("urls_login", templateVars);
 });
 
 //
@@ -134,7 +155,10 @@ app.post("/register", (req, res) => {
 //
 
 app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username)
+  console.log(req.body)
+  let userID = findIdByEmail(req.body.email)
+  console.log(users[userID])
+  res.cookie("user_id", userID);
   res.redirect("/urls");
 });
 
