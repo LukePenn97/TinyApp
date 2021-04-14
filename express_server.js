@@ -155,11 +155,22 @@ app.post("/register", (req, res) => {
 //
 
 app.post("/login", (req, res) => {
-  console.log(req.body)
   let userID = findIdByEmail(req.body.email)
-  console.log(users[userID])
-  res.cookie("user_id", userID);
-  res.redirect("/urls");
+  if(!req.body.email || !req.body.password) {
+    res.status(403).send("error, missing field");
+
+  } else if(!findEmail(req.body.email)) {
+    res.status(403).send("error, email doesn't exist!");
+
+  } else if (users[userID].password !== req.body.password) {
+    res.status(403).send("error, passwords don't match!");
+
+  } else {
+    console.log("Login: ", users[userID])
+    res.cookie("user_id", userID);
+    res.redirect("/urls");
+  }
+  
 });
 
 //
@@ -206,7 +217,7 @@ app.post("/urls/:shortURL/show", (req, res) => {
 //
 
 app.get("/hello", (req, res) => {
-  const templateVars = { greeting: 'Hello World!', username: req.cookies["username"], };
+  const templateVars = { greeting: 'Hello World!', user_id: req.cookies["user_id"], };
   res.render("hello_world", templateVars);
 });
 
