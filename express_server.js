@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 const PORT = 8080;
@@ -149,10 +150,11 @@ app.post("/register", (req, res) => {
     
   }
   let userID = generateRandomString(6);
+  const hashedPassword = bcrypt.hashSync(req.body.password, 10);
   users[userID] = {};
   users[userID].id = userID;
   users[userID].email = req.body.email;
-  users[userID].password = req.body.password;
+  users[userID].password = hashedPassword;
   res.cookie("user_id", userID);
   console.log(users[userID]);
   res.redirect("/urls");
@@ -175,10 +177,9 @@ app.post("/login", (req, res) => {
     return;
 
   }
-  if (users[userID].password !== req.body.password) {
+  if (!bcrypt.compareSync(req.body.password, users[userID].password)) {
     res.status(403).send("error, passwords don't match!");
     return;
-
   }
   console.log("Login: ", users[userID])
   res.cookie("user_id", userID);
