@@ -33,7 +33,6 @@ const users = {};
 //
 
 const generateRandomString = function(num) {
-  // taken from https://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
   let chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
   let result = '';
   for (let i = num; i > 0; --i) {
@@ -94,8 +93,6 @@ app.get("/urls/new", (req, res) => {
 //
 
 app.get("/urls/:shortURL", (req, res) => {
-  //console.log(req.params.shortURL);
-  //const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   const longURL = urlDatabase[req.params.shortURL].longURL;
   if (longURL) {
     res.redirect(longURL);
@@ -107,8 +104,7 @@ app.get("/urls/:shortURL", (req, res) => {
 //
 
 app.post("/urls", (req, res) => {
-  //console.log(req.body);  // Log the POST request body to the console
-  let urlID = generateRandomString(6);         // Respond with 'Ok' (we will replace this)
+  let urlID = generateRandomString(6);
   urlDatabase[urlID] = {};
   urlDatabase[urlID].longURL = req.body.longURL;
   urlDatabase[urlID].userID = req.session.user_id;
@@ -136,7 +132,6 @@ app.post("/register", (req, res) => {
   users[userID].email = req.body.email;
   users[userID].password = hashedPassword;
   req.session.user_id = userID;
-  console.log("Register:", users[userID]);
   res.redirect("/urls");
   
 });
@@ -161,11 +156,8 @@ app.post("/login", (req, res) => {
     res.status(403).send("error, passwords don't match!");
     return;
   }
-  console.log("Login: ", users[userID]);
   req.session.user_id = userID;
   res.redirect("/urls");
-  
-  
 });
 
 //
@@ -174,7 +166,6 @@ app.post("/login", (req, res) => {
 
 app.post("/logout", (req, res) => {
   req.session = null;
-  console.log("Logout:", users);
   res.redirect("/urls");
 });
 
