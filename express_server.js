@@ -194,7 +194,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 //
 
 app.post("/urls/:shortURL/edit", (req, res) => {
-  if (req.session.user_id === urlDatabase[req.params.shortURL].userID) {  
+  if (req.session.user_id === urlDatabase[req.params.shortURL].userID) {
     urlDatabase[req.params.shortURL].longURL = req.body.longURL;
   }
   res.redirect("/urls");
@@ -205,9 +205,8 @@ app.post("/urls/:shortURL/edit", (req, res) => {
 //
 
 app.post("/urls/:shortURL/show", (req, res) => {
-  const urlObj = {shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, user_id: req.session.user_id,}
-  console.log(urlObj);
-  res.render("urls_show", urlObj);
+  const templateVars = {shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, user_id: req.session.user_id, users: users};
+  res.render("urls_show", templateVars);
 });
 
 //
