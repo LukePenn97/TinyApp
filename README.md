@@ -17,10 +17,16 @@ TinyApp is a full stack web application built with Node and Express that allows 
 - Express
 - EJS
 - bcrypt
-- body-parser
 - cookie-session
+- - note: body-parser was deprecated because Express has the same functionality now, so I used the express method instead
 
 ## Getting Started
 
 - Install all dependencies (using the `npm install` command).
 - Run the development web server using the `node express_server.js` command.
+
+## Functionality
+
+- Create short URL links and save them to your account
+- Edit and delete links
+- Track the number of times your url has been clicked on, how many unique clicks, and list the visitor ids and timestamps for each click.
