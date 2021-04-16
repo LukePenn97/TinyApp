@@ -13,7 +13,7 @@
       <div class="card-body">
         <h3>TinyURL: <%= urls[shortURL].longURL %></h3>
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
-        <p class="card-text">This link has been visited <%= urls[shortURL].visits %> times</a></p>
+        <p class="card-text"><%= urls[shortURL].uniqueVisits %> unique visitors have visited this link a total of <%= urls[shortURL].visits %> times</a></p>
         <form class="card-body" id="updateURL" method="POST" action="/urls/<%= shortURL %>?_method=PUT">
         <div class="card-body">
           <p>Update your URL:</p>
@@ -23,7 +23,25 @@
       </form>
       <button class="btn btn-primary" type="submit" form="updateURL" value="submit">Update</button>
       </div>
-      
+      <h3>List of visits</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Visitor ID</th>
+            <th scope="col">Timestamp</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <% for (const visits of urls[shortURL].uniqueVisitors) { %> 
+            <tr>
+              <td><%= visits.visitorId %></td>
+              <td><%= visits.timestamp %></td>
+            </tr>          
+          <% } %>
+        </tbody>
+
+
       
     <div class="card-footer text-muted"></div>
   </div>

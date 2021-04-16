@@ -15,4 +15,13 @@ const generateRandomString = function(num) {
   return result;
 };
 
-module.exports = {findIdByEmail, generateRandomString};
+const findVisitorId = function(visitorId, arrayOfObjects) {
+  for (const obj of arrayOfObjects) {
+    if (obj.visitorId === visitorId) {
+      return true;
+    }
+  }
+  return false;
+};
+
+module.exports = {findIdByEmail, generateRandomString, findVisitorId};

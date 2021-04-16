@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const {findIdByEmail, generateRandomString} = require('./helpers.js');
+const {findIdByEmail, generateRandomString, findVisitorId} = require('./helpers.js');
 
 const express = require("express");
 const app = express();
@@ -23,14 +23,17 @@ app.use(methodOverride('_method'));
 const urlDatabase = {
   yXNVnR: {
     longURL: 'http://www.example.com',
-    userID: 'ICuxdB'
+    userID: 'userRandomID',
+    visits: 0,
+    uniqueVisits: 0,
+    uniqueVisitors: []
   }
 };
 const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur"
+    password: "pmd"
   },
   "user2RandomID": {
     id: "user2RandomID",
@@ -100,8 +103,14 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   if (urlDatabase[req.params.shortURL]) {
-    urlDatabase[req.params.shortURL].visits ? urlDatabase[req.params.shortURL].visits++ : urlDatabase[req.params.shortURL].visits = 1;
-    console.log(urlDatabase[req.params.shortURL].longURL, "has been visited", urlDatabase[req.params.shortURL].visits, "times");
+    urlDatabase[req.params.shortURL].visits = (urlDatabase[req.params.shortURL].visits || 0) + 1;
+    req.session.visitor_id = (req.session.user_id || req.session.visitor_id || generateRandomString(6));
+
+    if (!findVisitorId(req.session.visitor_id, urlDatabase[req.params.shortURL].uniqueVisitors)) {
+      urlDatabase[req.params.shortURL].uniqueVisits++;
+    }
+    let timestamp = new Date();
+    urlDatabase[req.params.shortURL].uniqueVisitors.push({visitorId: req.session.visitor_id, timestamp: timestamp});
     res.redirect(urlDatabase[req.params.shortURL].longURL);
     return;
   }
@@ -120,6 +129,8 @@ app.post("/urls", (req, res) => {
     urlDatabase[urlID].longURL = req.body.longURL;
     urlDatabase[urlID].userID = req.session.user_id;
     urlDatabase[urlID].visits = 0;
+    urlDatabase[urlID].uniqueVisits = 0;
+    urlDatabase[urlID].uniqueVisitors = [];
     res.redirect("/urls");
     return;
   }
@@ -204,9 +215,11 @@ app.post("/register", (req, res) => {
   }
 
   let userID = generateRandomString(6);
+  let visitorID = generateRandomString(6);
   const hashedPassword = bcrypt.hashSync(req.body.password, 10);
   users[userID] = {};
   users[userID].id = userID;
+  users[userID].visitorId = visitorID;
   users[userID].email = req.body.email;
   users[userID].password = hashedPassword;
   req.session.user_id = userID;
