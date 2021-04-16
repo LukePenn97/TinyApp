@@ -6,4 +6,13 @@ const findIdByEmail = function(currentEmail, users) {
   }
 };
 
-module.exports = {findIdByEmail};
+const generateRandomString = function(num) {
+  let chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let result = '';
+  for (let i = num; i > 0; --i) {
+    result += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return result;
+};
+
+module.exports = {findIdByEmail, generateRandomString};

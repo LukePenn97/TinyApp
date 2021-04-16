@@ -11,18 +11,18 @@
 <header><%- include('partials/_header') %></header>
 <body>
   <main style="margin: 1em;">
-    <h3>My URLs</h3>
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">Short URL</th>
-          <th scope="col">Long URL</th>
-          <th scope="col">Delete URL</th>
-          <th scope="col">Edit URL</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% if (user_id) { %>
+    <% if (user_id) { %>
+      <h3>My URLs</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Short URL</th>
+            <th scope="col">Long URL</th>
+            <th scope="col">Delete URL</th>
+            <th scope="col">Edit URL</th>
+          </tr>
+        </thead>
+        <tbody>
           <% let i = 0 %>
           <% for(let url in urls) { %>
             <% if (urls[url].userID === user_id) { %>
@@ -31,19 +31,21 @@
               <td><%= urls[url].longURL %></td>
               <td><form method="POST" id='delete<%=i%>' action='/urls/<%= url%>/delete'> </form>
               <button class="btn btn-outline-danger" type="submit" form='delete<%=i%>' value="submit">Delete</button></td>
-              <td><form method="POST" id='edit<%= i%>' action='/urls/<%=url%>/show'> </form>
+              <td><form method="GET" id='edit<%= i%>' action='/urls/<%=url%>'> </form>
               <button class="btn btn-outline-primary" type="submit" form='edit<%= i%>' value="submit">Edit</button></td>
               <% i++ %>
             </tr>
             <% } %>
           <% } %>
+          <td><form method="GET" id='newURL' action='/urls/new'> </form>
+          <button class="btn btn-outline-primary" type="submit" form='newURL' value="submit">Create a New Short Link</button></td>
+        </tbody>
+      </table>
         <% } else { %>
             <h4>Please Login or Register!</h4>
             <a class="btn btn-outline-primary" href="/login">Login</a>
             <a class="btn btn-outline-primary" href="/register">Register</a>
         <% } %>
-      </tbody>
-    </table>
   </main>
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

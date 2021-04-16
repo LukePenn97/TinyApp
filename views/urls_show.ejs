@@ -11,12 +11,12 @@
   <div class="card text-center">
       <div class="card-header"></div>
       <div class="card-body">
-        <h3>TinyURL: <%= longURL %></h3>
+        <h3>TinyURL: <%= urls[shortURL].longURL %></h3>
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
-        <form class="card-body" id="updateURL" method="POST" action="<%= '/urls/' + shortURL + '/edit' %>">
+        <form class="card-body" id="updateURL" method="POST" action="<%= '/urls/' + shortURL %>">
         <div class="card-body">
           <p>Update your URL:</p>
-          <input class="card-body" type="text" name="longURL" value="<%= longURL %>" style="width: 300px; margin: 1em">
+          <input class="card-body" type="text" name="longURL" value="<%= urls[shortURL].longURL %>" style="width: 300px; margin: 1em">
           
         </div>
       </form>
