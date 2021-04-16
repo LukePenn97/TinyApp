@@ -27,9 +27,9 @@
           <% for(let url in urls) { %>
             <% if (urls[url].userID === user_id) { %>
             <tr>
-              <td><a href="<%= urls[url].longURL %>"><%= url %></a></td>
+              <td><a href="/u/<%=url%>"><%= url %></a></td>
               <td><%= urls[url].longURL %></td>
-              <td><form method="POST" id='delete<%=i%>' action='/urls/<%= url%>/delete'> </form>
+              <td><form method="POST" id='delete<%=i%>' action='/urls/<%= url%>/delete?_method=DELETE'> </form>
               <button class="btn btn-outline-danger" type="submit" form='delete<%=i%>' value="submit">Delete</button></td>
               <td><form method="GET" id='edit<%= i%>' action='/urls/<%=url%>'> </form>
               <button class="btn btn-outline-primary" type="submit" form='edit<%= i%>' value="submit">Edit</button></td>

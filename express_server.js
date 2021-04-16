@@ -1,17 +1,20 @@
-const express = require("express");
-const app = express();
-const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const {findIdByEmail, generateRandomString} = require('./helpers.js');
 
+const express = require("express");
+const app = express();
+app.use(express.urlencoded({ extended: true })); // bodyParser deprecated
+const PORT = 8080;
+app.set("view engine", "ejs");
+
+const cookieSession = require('cookie-session');
 app.use(cookieSession({
   name: 'user_id',
   keys: ['the most secret secret of all the secrets', 'the second most secret secret'],
 }));
 
-app.use(express.urlencoded({ extended: true })); // bodyParser deprecated
-const PORT = 8080;
-app.set("view engine", "ejs");
+const methodOverride = require('method-override');
+app.use(methodOverride('_method'));
 
 //
 // URL DATABASE + USERS INFO
@@ -64,6 +67,7 @@ app.get("/urls/new", (req, res) => {
   const templateVars = { urls: urlDatabase, user_id: req.session.user_id, users: users};
   if (req.session.user_id) {
     res.render("urls_new", templateVars);
+    return;
   }
   res.render("urls_login", templateVars);
 });
@@ -96,6 +100,8 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   if (urlDatabase[req.params.shortURL]) {
+    urlDatabase[req.params.shortURL].visits ? urlDatabase[req.params.shortURL].visits++ : urlDatabase[req.params.shortURL].visits = 1;
+    console.log(urlDatabase[req.params.shortURL].longURL, "has been visited", urlDatabase[req.params.shortURL].visits, "times");
     res.redirect(urlDatabase[req.params.shortURL].longURL);
     return;
   }
@@ -113,6 +119,7 @@ app.post("/urls", (req, res) => {
     urlDatabase[urlID] = {};
     urlDatabase[urlID].longURL = req.body.longURL;
     urlDatabase[urlID].userID = req.session.user_id;
+    urlDatabase[urlID].visits = 0;
     res.redirect("/urls");
     return;
   }
@@ -121,10 +128,10 @@ app.post("/urls", (req, res) => {
 });
 
 //
-// POST EDIT URL
+// PUT EDIT URL
 //
 
-app.post("/urls/:shortURL", (req, res) => {
+app.put("/urls/:shortURL", (req, res) => {
   if (req.session.user_id) {
     if (req.session.user_id === urlDatabase[req.params.shortURL].userID) {
       urlDatabase[req.params.shortURL].longURL = req.body.longURL;
@@ -139,10 +146,10 @@ app.post("/urls/:shortURL", (req, res) => {
 });
 
 //
-// POST DELETE URL
+// DELETE URL
 //
 
-app.post("/urls/:shortURL/delete", (req, res) => {
+app.delete("/urls/:shortURL/delete", (req, res) => {
   if (req.session.user_id) {
     if (req.session.user_id === urlDatabase[req.params.shortURL].userID) {
       delete(urlDatabase[req.params.shortURL]);
@@ -177,12 +184,13 @@ app.get("/login", (req, res) => {
   if (!req.session.user_id) {
     const templateVars = { urls: urlDatabase, user_id: req.session.user_id, users: users};
     res.render("urls_login", templateVars);
+    return;
   }
   res.redirect("/urls");
 });
 
 //
-// POST REGISTER PAGE
+// POST REGISTER
 //
 
 app.post("/register", (req, res) => {
@@ -206,7 +214,7 @@ app.post("/register", (req, res) => {
 });
 
 //
-// POST LOGIN PAGE
+// POST LOGIN
 //
 
 app.post("/login", (req, res) => {
